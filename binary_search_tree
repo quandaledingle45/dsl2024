@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *left, *right;
+} Node;
+
+Node* newNode(int v){
+    Node* n = malloc(sizeof(Node));
+    n->data = v; n->left = n->right = NULL;
+    return n;
+}
+
+Node* insert(Node* r, int v){
+    if(!r) return newNode(v);
+    if(v < r->data) r->left = insert(r->left, v);
+    else if(v > r->data) r->right = insert(r->right, v);
+    return r;
+}
+
+Node* search(Node* r, int v){
+    if(!r || r->data == v) return r;
+    return (v < r->data) ? search(r->left, v) : search(r->right, v);
+}
+
+void inorder(Node* r){
+    if(r){ inorder(r->left); printf("%d ", r->data); inorder(r->right); }
+}
+
+int main(){
+    Node* root = NULL; int ch, x;
+    do{
+        printf("\n--- Binary Search Tree ---\n1.Insert\n2.Search\n3.Display(Inorder)\n0.Exit\nChoice: ");
+        scanf("%d", &ch);
+        if(ch == 1){ printf("Enter value: "); scanf("%d", &x); root = insert(root, x); }
+        else if(ch == 2){ printf("Enter value: "); scanf("%d", &x);
+            printf(search(root, x) ? "Found\n" : "Not Found\n"); }
+        else if(ch == 3){ printf("Inorder: "); inorder(root); printf("\n"); }
+    }while(ch != 0);
+}
