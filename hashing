@@ -1,0 +1,50 @@
+#include <stdio.h>
+#define SIZE 10
+
+int table[SIZE];
+
+int h1(int k){ return k % SIZE; }
+int h2(int k){ return 7 - (k % 7); }
+
+void init(){ for(int i=0;i<SIZE;i++) table[i]=-1; }
+
+void insert(int num,int m){
+    int i=0,idx,step=h2(num);
+    while(i<SIZE){
+        idx=(m==1)?(h1(num)+i)%SIZE:(m==2)?(h1(num)+i*i)%SIZE:(h1(num)+i*step)%SIZE;
+        if(table[idx]==-1){ table[idx]=num; printf("Inserted at %d\n",idx); return; }
+        i++;
+    }
+    printf("Table full!\n");
+}
+
+void search(int num,int m){
+    int i=0,idx,step=h2(num);
+    while(i<SIZE){
+        idx=(m==1)?(h1(num)+i)%SIZE:(m==2)?(h1(num)+i*i)%SIZE:(h1(num)+i*step)%SIZE;
+        if(table[idx]==-1) break;
+        if(table[idx]==num){ printf("Found at %d\n",idx); return; }
+        i++;
+    }
+    printf("Not found!\n");
+}
+
+void display(){
+    printf("\nHash Table:\n");
+    for(int i=0;i<SIZE;i++)
+        (table[i]==-1)?printf("[%d] ---\n",i):printf("[%d] %d\n",i,table[i]);
+}
+
+int main(){
+    int ch,num; init();
+    do{
+        printf("\n--- Telephone Book using Hash Table ---\n"
+               "1.Insert(Linear)\n2.Insert(Quadratic)\n3.Insert(Double)\n"
+               "4.Search(Linear)\n5.Search(Quadratic)\n6.Search(Double)\n"
+               "7.Display\n0.Exit\nEnter choice: ");
+        scanf("%d",&ch);
+        if(ch>=1&&ch<=3){ printf("Enter number: "); scanf("%d",&num); insert(num,ch); }
+        else if(ch>=4&&ch<=6){ printf("Enter number: "); scanf("%d",&num); search(num,ch-3); }
+        else if(ch==7) display();
+    }while(ch!=0);
+}
