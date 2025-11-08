@@ -1,0 +1,41 @@
+#include <stdio.h>
+#define MAX 5
+
+int q[MAX], front = -1, rear = -1;
+
+int isFull()  { return rear == MAX - 1; }
+int isEmpty() { return front == -1 || front > rear; }
+
+void addOrder(int o) {
+    if (isFull()) printf("Orders full! Cannot add %d.\n", o);
+    else {
+        if (front == -1) front = 0;
+        q[++rear] = o;
+        printf("Order %d added.\n", o);
+    }
+}
+
+void serveOrder() {
+    if (isEmpty()) printf("No orders to serve.\n");
+    else printf("Order %d served.\n", q[front++]);
+}
+
+void display() {
+    if (isEmpty()) printf("No pending orders.\n");
+    else {
+        printf("Pending orders: ");
+        for (int i = front; i <= rear; i++) printf("%d ", q[i]);
+        printf("\n");
+    }
+}
+
+int main() {
+    int ch, o;
+    do {
+        printf("\n--- Pizza Parlor ---\n1.Add Order\n2.Serve Order\n3.Display\n0.Exit\nChoice: ");
+        scanf("%d", &ch);
+        if (ch == 1) { printf("Enter order no: "); scanf("%d", &o); addOrder(o); }
+        else if (ch == 2) serveOrder();
+        else if (ch == 3) display();
+    } while (ch != 0);
+}
