@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Node {
+    char name[30];
+    struct Node *next;
+};
+
+struct Node* createNode(char n[]) {
+    struct Node* p = malloc(sizeof(struct Node));
+    strcpy(p->name, n);
+    p->next = NULL;
+    return p;
+}
+
+void insert(struct Node **head, char n[]) {
+    struct Node *temp = createNode(n), *t = *head;
+    if (!*head) *head = temp;
+    else { while (t->next) t = t->next; t->next = temp; }
+}
+
+void del(struct Node **head, char n[]) {
+    struct Node *t = *head, *prev = NULL;
+    while (t && strcmp(t->name, n)) { prev = t; t = t->next; }
+    if (!t) printf("Not found\n");
+    else { if (!prev) *head = t->next; else prev->next = t->next; free(t); }
+}
+
+void display(struct Node *h) {
+    printf("\nMembers:\n");
+    while (h) { printf("%s -> ", h->name); h = h->next; }
+    printf("NULL\n");
+}
+
+int count(struct Node *h) {
+    int c=0; while (h) { c++; h=h->next; } return c;
+}
+
+struct Node* concat(struct Node *h1, struct Node *h2) {
+    if (!h1) return h2;
+    struct Node *t = h1; while (t->next) t = t->next;
+    t->next = h2; return h1;
+}
+
+int main() {
+    struct Node *list1=NULL, *list2=NULL;
+    int ch; char name[30];
+    do {
+        printf("\n--- Pinnacle Club ---\n1.Insert\n2.Delete\n3.Count\n4.Display\n5.Concat\n0.Exit\nEnter choice: ");
+        scanf("%d", &ch);
+        switch (ch) {
+            case 1: printf("Enter name: "); scanf("%s", name); insert(&list1, name); break;
+            case 2: printf("Enter name: "); scanf("%s", name); del(&list1, name); break;
+            case 3: printf("Total members: %d\n", count(list1)); break;
+            case 4: display(list1); break;
+            case 5: 
+                printf("Enter name for 2nd list: "); scanf("%s", name);
+                insert(&list2, name);
+                list1 = concat(list1, list2);
+                printf("Lists concatenated.\n");
+                break;
+        }
+    } while (ch != 0);
+    return 0;
+}
