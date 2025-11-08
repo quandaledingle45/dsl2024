@@ -1,0 +1,38 @@
+#include <stdio.h>
+
+void selectionSort(float a[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        int min = i;
+        for (int j = i + 1; j < n; j++)
+            if (a[j] < a[min]) min = j;
+        float t = a[i]; a[i] = a[min]; a[min] = t;
+    }
+}
+
+void bubbleSort(float a[], int n) {
+    for (int i = 0; i < n - 1; i++)
+        for (int j = 0; j < n - i - 1; j++)
+            if (a[j] > a[j + 1]) {
+                float t = a[j]; a[j] = a[j + 1]; a[j + 1] = t;
+            }
+}
+void topFive(float a[], int n) {
+    printf("\nTop five scores:\n");
+    for (int i = n - 1; i >= n - ((n < 5) ? n : 5); i--)
+        printf("%.2f\n", a[i]);
+}
+int main() {
+    float a[100];
+    int n, ch;
+    printf("Enter number of students: ");
+    scanf("%d", &n);
+    printf("Enter percentages:\n");
+    for (int i = 0; i < n; i++) scanf("%f", &a[i]);
+    printf("\n1.Selection Sort\n2.Bubble Sort\nEnter choice: ");
+    scanf("%d", &ch);
+    (ch == 1) ? selectionSort(a, n) : bubbleSort(a, n);
+    printf("\nSorted percentages:\n");
+    for (int i = 0; i < n; i++) printf("%.2f ", a[i]);
+    topFive(a, n);
+    return 0;
+}
