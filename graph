@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <string.h>
+#define MAX 10
+
+int g[MAX][MAX], n=0, v[MAX];
+char city[MAX][20];
+
+int findCity(char *c){ for(int i=0;i<n;i++) if(!strcmp(city[i],c)) return i; return -1; }
+void dfs(int i){ v[i]=1; for(int j=0;j<n;j++) if(g[i][j]&&!v[j]) dfs(j); }
+
+void addCity(){
+    if(n==MAX) printf("City limit reached!\n");
+    else { printf("Enter city name: "); scanf("%s",city[n++]); printf("City added.\n"); }
+}
+
+void addFlight(){
+    char s[20],d[20]; int cost;
+    printf("Enter source city: "); scanf("%s",s);
+    printf("Enter destination city: "); scanf("%s",d);
+    int i=findCity(s), j=findCity(d);
+    if(i==-1||j==-1){ printf("Invalid city name(s).\n"); return; }
+    printf("Enter cost: "); scanf("%d",&cost);
+    g[i][j]=g[j][i]=cost; printf("Flight added.\n");
+}
+
+void display(){
+    printf("\nFlight Graph:\n   ");
+    for(int i=0;i<n;i++) printf("%10s",city[i]);
+    printf("\n");
+    for(int i=0;i<n;i++){ 
+        printf("%10s",city[i]);
+        for(int j=0;j<n;j++) printf("%10d",g[i][j]);
+        printf("\n");
+    }
+}
+
+void check(){
+    memset(v,0,sizeof(v)); dfs(0);
+    for(int i=0;i<n;i++) if(!v[i]){ printf("Graph NOT connected.\n"); return; }
+    printf("Graph is connected.\n");
+}
+
+int main(){
+    int ch;
+    do{
+        printf("\n--- Flight Path Graph Menu ---\n"
+               "1.Add city\n2.Add flight path\n3.Display flight graph\n4.Check if graph connected\n5.Exit\nChoice: ");
+        scanf("%d",&ch);
+        if(ch==1) addCity();
+        else if(ch==2) addFlight();
+        else if(ch==3) display();
+        else if(ch==4) check();
+    }while(ch!=5);
+}
