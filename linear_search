@@ -1,0 +1,13 @@
+#include <stdio.h>
+int main() {
+    int n, a[100], key, i, f = 0;
+    printf("Enter number of students: ");
+    scanf("%d", &n);
+    printf("Enter roll numbers:\n");
+    for(i = 0; i < n; i++) scanf("%d", &a[i]);
+    printf("Enter roll number to search: ");
+    scanf("%d", &key);
+    for(i = 0; i < n; i++) if(a[i] == key) { f = 1; break; }
+    printf(f ? "Student attended.\n" : "Student not attended.\n");
+    return 0;
+}
