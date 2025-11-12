@@ -1,41 +1,46 @@
 #include <stdio.h>
-#include <stdlib.h>
+#define MAX 5
 
-typedef struct Node {
-    int data;
-    struct Node *left, *right;
-} Node;
+int q[MAX], front = -1, rear = -1;
 
-Node* newNode(int v){
-    Node* n = malloc(sizeof(Node));
-    n->data = v; n->left = n->right = NULL;
-    return n;
+int isFull()  { return rear == MAX - 1; }
+int isEmpty() { return front == -1 || front > rear; }
+
+void addOrder(int o) {
+    if (isFull()) printf("Orders full! Cannot add %d.\n", o);
+    else {
+        if (front == -1) front = 0;
+        q[++rear] = o;
+        printf("Order %d added.\n", o);
+    }
 }
 
-Node* insert(Node* r, int v){
-    if(!r) return newNode(v);
-    if(v < r->data) r->left = insert(r->left, v);
-    else if(v > r->data) r->right = insert(r->right, v);
-    return r;
+void deleteOrder() {
+    if (isEmpty()) printf("No orders to delete.\n");
+    else printf("Order %d deleted.\n", q[front++]);
 }
 
-Node* search(Node* r, int v){
-    if(!r || r->data == v) return r;
-    return (v < r->data) ? search(r->left, v) : search(r->right, v);
+void display() {
+    if (isEmpty()) printf("No pending orders.\n");
+    else {
+        printf("Pending orders: ");
+        for (int i = front; i <= rear; i++) printf("%d ", q[i]);
+        printf("\n");
+    }
 }
 
-void inorder(Node* r){
-    if(r){ inorder(r->left); printf("%d ", r->data); inorder(r->right); }
-}
-
-int main(){
-    Node* root = NULL; int ch, x;
-    do{
-        printf("\n--- Binary Search Tree ---\n1.Insert\n2.Search\n3.Display(Inorder)\n0.Exit\nChoice: ");
+int main() {
+    int ch, o;
+    do {
+        printf("\n--- Pizza Parlor ---\n1.Add Order\n2.Delete Order\n3.Display\n0.Exit\nChoice: ");
         scanf("%d", &ch);
-        if(ch == 1){ printf("Enter value: "); scanf("%d", &x); root = insert(root, x); }
-        else if(ch == 2){ printf("Enter value: "); scanf("%d", &x);
-            printf(search(root, x) ? "Found\n" : "Not Found\n"); }
-        else if(ch == 3){ printf("Inorder: "); inorder(root); printf("\n"); }
-    }while(ch != 0);
+        if (ch == 1) {
+            printf("Enter order no: ");
+            scanf("%d", &o);
+            addOrder(o);
+        }
+        else if (ch == 2) deleteOrder();
+        else if (ch == 3) display();
+    } while (ch != 0);
 }
+
