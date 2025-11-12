@@ -1,50 +1,44 @@
 #include <stdio.h>
+#include <string.h>
 #define SIZE 10
 
-int table[SIZE];
-
-int h1(int k){ return k % SIZE; }
-int h2(int k){ return 7 - (k % 7); }
-
-void init(){ for(int i=0;i<SIZE;i++) table[i]=-1; }
-
-void insert(int num,int m){
-    int i=0,idx,step=h2(num);
-    while(i<SIZE){
-        idx=(m==1)?(h1(num)+i)%SIZE:(m==2)?(h1(num)+i*i)%SIZE:(h1(num)+i*step)%SIZE;
-        if(table[idx]==-1){ table[idx]=num; printf("Inserted at %d\n",idx); return; }
-        i++;
+typedef struct { char name[30]; long long phone; } Client;
+Client h[SIZE];
+int hash(char *s){int sum=0;for(int i=0;s[i];i++)sum+=s[i];return sum%SIZE;}
+int hash2(char *s){int sum=0;for(int i=0;s[i];i++)sum+=s[i];return 7-(sum%7);}
+void insert(char *n,long long p,int t){
+    int i,idx=hash(n),step=(t==3?hash2(n):1);
+    for(i=0;i<SIZE;i++){
+        int pos=(t==2)?(idx+i*i)%SIZE:(idx+i*step)%SIZE;
+        if(h[pos].phone==-1){strcpy(h[pos].name,n);h[pos].phone=p;return;}
     }
     printf("Table full!\n");
 }
-
-void search(int num,int m){
-    int i=0,idx,step=h2(num);
-    while(i<SIZE){
-        idx=(m==1)?(h1(num)+i)%SIZE:(m==2)?(h1(num)+i*i)%SIZE:(h1(num)+i*step)%SIZE;
-        if(table[idx]==-1) break;
-        if(table[idx]==num){ printf("Found at %d\n",idx); return; }
-        i++;
+long long search(char *n){
+    for(int i=0;i<SIZE;i++){
+        int pos=(hash(n)+i)%SIZE;
+        if(h[pos].phone==-1) return -1;
+        if(!strcmp(h[pos].name,n)) return h[pos].phone;
     }
-    printf("Not found!\n");
-}
-
-void display(){
-    printf("\nHash Table:\n");
-    for(int i=0;i<SIZE;i++)
-        (table[i]==-1)?printf("[%d] ---\n",i):printf("[%d] %d\n",i,table[i]);
+    return -1;
 }
 
 int main(){
-    int ch,num; init();
-    do{
-        printf("\n--- Telephone Book using Hash Table ---\n"
-               "1.Insert(Linear)\n2.Insert(Quadratic)\n3.Insert(Double)\n"
-               "4.Search(Linear)\n5.Search(Quadratic)\n6.Search(Double)\n"
-               "7.Display\n0.Exit\nEnter choice: ");
-        scanf("%d",&ch);
-        if(ch>=1&&ch<=3){ printf("Enter number: "); scanf("%d",&num); insert(num,ch); }
-        else if(ch>=4&&ch<=6){ printf("Enter number: "); scanf("%d",&num); search(num,ch-3); }
-        else if(ch==7) display();
-    }while(ch!=0);
+    for(int i=0;i<SIZE;i++)h[i].phone=-1;
+    int c,n;char name[30];long long p;
+    printf("Collision Handling Technique");
+    printf("\n1.Linear\n 2.Quadratic\n 3.Double\nChoice: ");scanf("%d",&c);
+    printf("No. of clients: ");scanf("%d",&n);
+    for(int i=0;i<n;i++){
+        printf("\nName: ");scanf("%s",name);
+        printf("Phone number: ");scanf("%lld",&p);
+        insert(name,p,c);
+    }
+    printf("\nIndex\tName\tPhone\n---------------------\n");
+    for(int i=0;i<SIZE;i++)
+        (h[i].phone!=-1)?printf("%d\t%s\t%lld\n",i,h[i].name,h[i].phone):printf("%d\t---\n",i);
+    printf("\nSearch name: ");scanf("%s",name);
+    long long r=search(name);
+    printf((r!=-1)?"Phone: %lld\n":"Client not found!\n",r);
 }
+
