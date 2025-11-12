@@ -1,0 +1,123 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    int prn;
+    char name[50];
+    struct Node *next;
+} Node;
+
+// Create a new node
+Node* createNode(int prn, char name[]) {
+    Node* n = (Node*)malloc(sizeof(Node));
+    n->prn = prn;
+    strcpy(n->name, name);
+    n->next = NULL;
+    return n;
+}
+
+// Insert: President (begin), Secretary (end), Member (middle)
+void insert(Node **head, int prn, char name[], int type) {
+    Node *n = createNode(prn, name);
+    if (*head == NULL) { *head = n; return; }
+
+    if (type == 1) {  // president
+        n->next = *head;
+        *head = n;
+    } 
+    else if (type == 2) { // secretary
+        Node *t = *head;
+        while (t->next) t = t->next;
+        t->next = n;
+    } 
+    else { // member (between president & secretary)
+        Node *t = *head;
+        while (t->next && t->next->next) t = t->next;
+        n->next = t->next;
+        t->next = n;
+    }
+}
+
+// Delete any member by PRN
+void delete(Node **head, int prn) {
+    if (!*head) return;
+    Node *t = *head, *p = NULL;
+    while (t && t->prn != prn) { p = t; t = t->next; }
+    if (!t) { printf("Not found!\n"); return; }
+    if (!p) *head = t->next; else p->next = t->next;
+    free(t);
+}
+
+// Display
+void display(Node *h) {
+    if (!h) { printf("No members!\n"); return; }
+    printf("\nPRN\tName\n----------------\n");
+    while (h) { printf("%d\t%s\n", h->prn, h->name); h = h->next; }
+}
+
+// Count
+int count(Node *h) {
+    int c = 0;
+    while (h) { c++; h = h->next; }
+    return c;
+}
+
+// Concatenate two lists
+Node* concat(Node *a, Node *b) {
+    if (!a) return b;
+    Node *t = a;
+    while (t->next) t = t->next;
+    t->next = b;
+    return a;
+}
+
+int main() {
+    Node *divA = NULL, *divB = NULL, *merged = NULL;
+    int ch, prn, type;
+    char name[50];
+
+    while (1) {
+        printf("\n1.Insert\n2.Delete\n3.Display\n4.Concatenate\n5.Count\n6.Exit\nChoice: ");
+        scanf("%d", &ch);
+
+        switch (ch) {
+            case 1:
+                printf("1.President 2.Member 3.Secretary: ");
+                scanf("%d", &type);
+                printf("Enter PRN and Name: ");
+                scanf("%d %s", &prn, name);
+                insert(&divA, prn, name, type);
+                break;
+
+            case 2:
+                printf("Enter PRN to delete: ");
+                scanf("%d", &prn);
+                delete(&divA, prn);
+                break;
+
+            case 3:
+                display(divA);
+                break;
+
+            case 4:
+                printf("Enter 3 members for Division B:\n");
+                for (int i = 0; i < 3; i++) {
+                    printf("PRN and Name: ");
+                    scanf("%d %s", &prn, name);
+                    insert(&divB, prn, name, 2);
+                }
+                merged = concat(divA, divB);
+                printf("\nAfter concatenation:\n");
+                display(merged);
+                break;
+
+            case 5:
+                printf("Total members: %d\n", count(divA));
+                break;
+
+            case 6:
+                exit(0);
+        }
+    }
+} 
